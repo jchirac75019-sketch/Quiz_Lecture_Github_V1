@@ -397,18 +397,53 @@
       ok:0,ko:0,questions:[],idx:0,mode:"text",reciter:"mishary",history:[]
     };
 
+    // Wake Lock pour empêcher la mise en veille
+    let wakeLock = null;
+
+    async function requestWakeLock() {
+    try {
+    if ('wakeLock' in navigator) {
+      wakeLock = await navigator.wakeLock.request('screen');
+      console.log('Wake Lock activé');
+      }
+    } catch (err) {
+      console.error('Wake Lock échoué:', err);
+    }
+  }
+
+  function releaseWakeLock() {
+    if (wakeLock !== null) {
+      wakeLock.release().then(() => {
+        wakeLock = null;
+        console.log('Wake Lock désactivé');
+      });
+    }
+  }
+
     // Init
     document.addEventListener('DOMContentLoaded', () => {
       initSelectors();
       bindEvents();
       updateTotals();
       toggleReciter();
-      // Anti-sommeil
+  
+   // Wake Lock : réactiver quand l'utilisateur revient sur l'app
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && state.timer !== null) {
+          requestWakeLock();
+        }
+      });
+  
+   // Anti-sommeil vidéo (fallback pour navigateurs sans Wake Lock)
       const arm = () => E.nosleep.play().catch(()=>{});
       document.addEventListener('click', arm, {once:true});
       document.addEventListener('touchstart', arm, {once:true});
-      // Service Worker inline
+  
+   // Service Worker inline
       registerSWInline();
+  
+   // Restaurer l'état si l'utilisateur revient après avoir quitté l'app
+      restoreQuizIfNeeded();
     });
 
     function initSelectors(){
@@ -425,11 +460,14 @@
     }
 
     function bindEvents(){
-      E.startSurah.addEventListener('change', ()=>{validateStart();updateTotals()});
-      E.endSurah.addEventListener('change', ()=>{setEndMax();validateEnd();updateTotals()});
-      E.startVerse.addEventListener('input', ()=>{validateStart();updateTotals()});
-      E.endVerse.addEventListener('input', ()=>{validateEnd();updateTotals()});
-      E.mode.addEventListener('change', toggleReciter);
+      E.startSurah.addEventListener('change', ()=>{clearQuizState(); validateStart();updateTotals()});
+      E.endSurah.addEventListener('change', ()=>{clearQuizState(); setEndMax();validateEnd();updateTotals()});
+      E.startVerse.addEventListener('input', ()=>{clearQuizState(); validateStart();updateTotals()});
+      E.endVerse.addEventListener('input', ()=>{clearQuizState(); validateEnd();updateTotals()});
+      E.mode.addEventListener('change', ()=>{clearQuizState(); toggleReciter()});
+      E.attempts.addEventListener('change', ()=>{clearQuizState()});
+      E.reciter.addEventListener('change', ()=>{clearQuizState()});
+
       E.startBtn.addEventListener('click', startQuiz);
       E.homeBtn.addEventListener('click', () => goto('home'));
       E.newQuiz.addEventListener('click', () => goto('home'));
@@ -528,15 +566,20 @@
       goto('quiz');
       startTimer();
       showQuestion();
+      requestWakeLock();    // Activer Wake Lock au début du quiz
+      saveQuizState();      // Sauvegarder l'état initial
     }
 
     function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}return arr}
 
     function goto(id){
-      for(const k of Object.keys(E.pages)) E.pages[k].classList.remove('active');
-      E.pages[id].classList.add('active');
-      if(id==='home'){stopTimer()}
+    for(const k of Object.keys(E.pages)) E.pages[k].classList.remove('active');
+    E.pages[id].classList.add('active');
+    if(id==='home'){
+      stopTimer();
+      clearQuizState();  // Nettoyer quand on retourne à l'accueil
     }
+  }
 
     function startTimer(){
       stopTimer();
@@ -550,6 +593,68 @@
     function pauseTimer(){ if(state.active){ state.active=false; } }
     function resumeTimer(){ if(!state.active){ state.lastTick = Date.now(); state.active=true; } }
     function stopTimer(){ if(state.timer){ clearInterval(state.timer); state.timer=null; } }
+    
+    // Sauvegarder l'état du quiz
+    function saveQuizState() {
+      if (state.questions.length > 0) {
+        const toSave = {
+          ...state,
+          startTime: state.startTime ? state.startTime.toISOString() : null,
+          endTime: state.endTime ? state.endTime.toISOString() : null,
+          history: state.history.map(h => ({
+            ...h,
+            at: h.at.toISOString()
+          }))
+        };
+        sessionStorage.setItem('quizState', JSON.stringify(toSave));
+      }
+    }
+
+   // Restaurer l'état du quiz
+    function restoreQuizIfNeeded() {
+      const saved = sessionStorage.getItem('quizState');
+      if (!saved) return;
+  
+      try {
+        const restored = JSON.parse(saved);
+    
+    // Restaurer l'état
+    state = {
+      ...restored,
+      startTime: restored.startTime ? new Date(restored.startTime) : null,
+      endTime: restored.endTime ? new Date(restored.endTime) : null,
+      history: restored.history.map(h => ({
+        ...h,
+        at: new Date(h.at)
+      })),
+      timer: null  // Le timer sera redémarré
+    };
+    
+    // Restaurer l'UI
+        E.tot.textContent = state.questions.length;
+        E.cur.textContent = (state.idx + 1).toString();
+        E.ok.textContent = state.ok.toString();
+        E.ko.textContent = state.ko.toString();
+        E.time.textContent = fmtMs(state.activeMs);
+    
+    // Afficher la page quiz
+        goto('quiz');
+        startTimer();
+        showQuestion();
+        requestWakeLock();
+    
+        console.log('Quiz restauré avec succès');
+      } catch (e) {
+        console.error('Erreur de restauration:', e);
+        sessionStorage.removeItem('quizState');
+      }
+    }
+
+   // Effacer la sauvegarde
+    function clearQuizState() {
+      sessionStorage.removeItem('quizState');
+      releaseWakeLock();
+    }
 
     function fmtMs(ms){
       const s=Math.floor(ms/1000);
@@ -720,8 +825,13 @@ async function showAudioInfo(){
         E.answersAudio.style.display='none'; E.next2.style.display='inline-block';
       }
     }
+       saveQuizState();      // Sauvegarder après chaque réponse
 
-    function next(){ state.idx++; showQuestion(); }
+    function next(){ 
+     state.idx++; 
+     saveQuizState();    // Sauvegarder avant de changer de question
+     showQuestion(); 
+   }
 
     function endQuiz(){
       stopTimer();
@@ -746,6 +856,7 @@ async function showAudioInfo(){
         </div>`;
       }).join('');
       goto('results');
+      clearQuizState();     // Nettoyer la sauvegarde à la fin du quiz
     }
 
     // Service Worker inline (cache de base)
