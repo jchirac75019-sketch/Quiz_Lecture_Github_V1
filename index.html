@@ -115,12 +115,43 @@
 .flex-audio {
   display: flex;
   align-items: center;
-  gap: 12px;          /* espace entre le lecteur et le bouton */
-  justify-content: center;  /* centrer horizontalement */
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;        /* Permet le retour à la ligne sur mobile */
 }
 
 .flex-audio audio {
-  flex-shrink: 0;     /* ne pas réduire la largeur du lecteur */
+  flex: 1 1 auto;         /* Le lecteur prend l'espace disponible */
+  min-width: 200px;       /* Largeur minimale */
+  max-width: 100%;        /* Ne dépasse jamais la largeur du conteneur */
+}
+
+.flex-audio button {
+  white-space: normal;    /* Permet le retour à la ligne du texte */
+  min-width: 120px;       /* Largeur minimale du bouton */
+  flex: 0 1 auto;         /* Le bouton s'adapte à son contenu */
+  padding: 10px 16px;     /* Padding ajusté pour mobile */
+  font-size: 14px;        /* Taille de texte adaptée */
+}
+
+/* Media query pour mobile */
+@media (max-width: 768px) {
+  .flex-audio {
+    flex-direction: column;  /* Empile le lecteur et le bouton verticalement */
+    gap: 8px;
+  }
+  
+  .flex-audio audio {
+    width: 100%;             /* Le lecteur prend toute la largeur */
+    max-width: 100%;
+  }
+  
+  .flex-audio button {
+    width: 100%;             /* Le bouton prend toute la largeur */
+    max-width: 100%;
+    font-size: 15px;         /* Légèrement plus grand sur mobile */
+    padding: 12px 20px;
+  }
 }
 
     .controls{text-align:center;margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
