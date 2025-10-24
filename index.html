@@ -489,6 +489,8 @@
    // Service Worker inline
       registerSWInline();
   
+      precacheAudios();
+
    // Restaurer l'état si l'utilisateur revient après avoir quitté l'app
       restoreQuizIfNeeded();
     });
@@ -790,27 +792,27 @@
 
     async function loadAudio(q){
   const primary = audioUrlEveryAyah(state.reciter, q.surah, q.verse);
+  const fallbacks = audioFallbacks(q.surah, q.verse);
+  const sources = [primary, ...fallbacks];
   
-  try {
-    E.player.src = primary;
-    await E.player.load();
-    await E.player.play();
-    console.log('✅ Audio chargé:', primary);
-  } catch(err) {
-    console.error('❌ Erreur audio pour', state.reciter, ':', err);
-    console.log('URL tentée:', primary);
-    
-    // Fallback vers Alafasy en dernier recours
-    const fallbackUrl = audioUrlEveryAyah('ghamdi', q.surah, q.verse);
+  for(let i = 0; i < sources.length; i++){
     try {
-      E.player.src = fallbackUrl;
+      const response = await fetch(sources[i]);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      
+      const blob = await response.blob();
+      const audioUrl = URL.createObjectURL(blob);
+      E.player.src = audioUrl;
       await E.player.load();
       await E.player.play();
-      console.log('⚠️ Fallback Alafasy utilisé');
-      alert('تعذر تحميل صوت القارئ المحدد. استخدام سعد الغامدي بدلاً منه');
-    } catch(err2) {
-      console.error('❌ Fallback échoué aussi:', err2);
-      alert('خطأ في تحميل الصوت');
+      console.log('✅ Audio chargé:', sources[i]);
+      return;
+    } catch(err) {
+      console.warn(`⚠️ Source ${i+1} échouée:`, err.message);
+      if(i === sources.length - 1) {
+        console.error('❌ Audio indisponible (hors ligne ou source manquante)');
+        alert('الصوت غير متاح. تأكد من اتصالك بالإنترنت أو أنك قد قمت بتحميل الصوت مسبقاً');
+      }
     }
   }
 }
@@ -917,27 +919,86 @@ async function showAudioInfo(){
 
     // Service Worker inline (cache de base)
     function registerSWInline(){
-      if(!('serviceWorker' in navigator)) return;
-      const swCode = `
-        const CACHE='quiz-coran-v1';
-        const CORE=['./','./index.html'];
-        self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)))});
-        self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.map(k=>k!==CACHE&&caches.delete(k)))))});
-        self.addEventListener('fetch',e=>{
-          const url=new URL(e.request.url);
-          if(url.origin===location.origin){
-            e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
-              const copy=res.clone(); caches.open(CACHE).then(c=>c.put(e.request,copy)); return res;
-            }).catch(()=>caches.match('./index.html'))));
-          }else{
-            e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));
-          }
-        });
-      `;
-      const blob = new Blob([swCode],{type:'application/javascript'});
-      const url = URL.createObjectURL(blob);
-      navigator.serviceWorker.register(url).catch(console.warn);
+  if(!('serviceWorker' in navigator)) return;
+  const swCode = `
+    const CACHE='quiz-coran-v2';
+    const CORE=['./','./index.html'];
+    
+    self.addEventListener('install',e=>{
+      e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE).catch(()=>{})));
+      self.skipWaiting();
+    });
+    
+    self.addEventListener('activate',e=>{
+      e.waitUntil(caches.keys().then(keys=>Promise.all(keys.map(k=>k!==CACHE&&caches.delete(k)))));
+      self.clients.claim();
+    });
+    
+    self.addEventListener('fetch',e=>{
+      const url=new URL(e.request.url);
+      
+      // Local resources: network first, then cache
+      if(url.origin===location.origin){
+        e.respondWith(
+          fetch(e.request)
+            .then(res=>{
+              if(!res || res.status!==200 || res.type==='error') return res;
+              const copy=res.clone();
+              caches.open(CACHE).then(c=>c.put(e.request,copy));
+              return res;
+            })
+            .catch(()=>caches.match(e.request).then(r=>r||caches.match('./index.html')))
+        );
+      }
+      // External APIs & Audio: cache first, then network
+      else if(url.hostname.includes('everyayah') || url.hostname.includes('alquran') || url.hostname.includes('islamic.network')){
+        e.respondWith(
+          caches.match(e.request)
+            .then(r=>r||fetch(e.request).then(res=>{
+              if(res && res.status===200){
+                const copy=res.clone();
+                caches.open(CACHE).then(c=>c.put(e.request,copy));
+              }
+              return res;
+            }).catch(()=>new Response('Ressource non disponible hors ligne',{status:503})))
+        );
+      }
+      // Autres requêtes: network first
+      else{
+        e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));
+      }
+    });
+  `;
+  const blob = new Blob([swCode],{type:'application/javascript'});
+  const url = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(url).catch(console.warn);
+}
+
+async function precacheAudios() {
+  if (!('caches' in window)) return;
+  
+  const cache = await caches.open('quiz-coran-v2');
+  const reciters = ['Alafasy_128kbps', 'Abu_Bakr_Ash-Shaatree_128kbps', 'Ghamadi_40kbps'];
+  
+  // Pré-cache quelques versets populaires (Sourate 1, versets 1-7)
+  for (let surah = 1; surah <= 1; surah++) {
+    for (let verse = 1; verse <= 7; verse++) {
+      const s = String(surah).padStart(3, '0');
+      const v = String(verse).padStart(3, '0');
+      
+      for (const reciter of reciters) {
+        const url = `https://everyayah.com/data/${reciter}/${s}${v}.mp3`;
+        try {
+          const res = await fetch(url);
+          if (res.ok) await cache.put(url, res);
+        } catch (e) {
+          console.log(`Pré-cache échoué pour ${reciter}/${s}${v}`);
+        }
+      }
     }
+  }
+  console.log('✅ Pré-cache des audios terminé');
+}
   </script>
 </body>
 </html>
