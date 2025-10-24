@@ -409,15 +409,15 @@
     ];
 
     const RECITERS = [
-      {id:"mishary", name:"مشاري راشد العفاسي", path:"Alafasy_128kbps"},
-      {id:"sudais", name:"عبد الرحمن السديس", path:"Abdurrahman_As-Sudais_128kbps"},
-      {id:"ghamdi", name:"سعد الغامدي", path:"Saad_Al-Ghamidi_128kbps"},
-      {id:"husary", name:"محمود خليل الحصري", path:"Mahmoud_Khalil_Al-Husary_128kbps"},
-      {id:"minshawi", name:"محمد صديق المنشاوي", path:"Mohamed_Siddiq_Al-Minshawi_128kbps"},
-      {id:"shatri", name:"أبو بكر الشاطري", path:"Abu_Bakr_Ash-Shaatree_128kbps"},
-      {id:"muaiqly", name:"ماهر المعيقلي", path:"Maher_Al-Muaiqly_128kbps"},
-      {id:"shuraym", name:"سعود الشريم", path:"Saud_Ash-Shuraym_128kbps"}
-    ];
+  {id:"alafasy", name:"مشاري راشد العفاسي", path:"Alafasy_128kbps"},
+  {id:"shatri", name:"أبو بكر الشاطري", path:"Abu_Bakr_Ash-Shaatree_128kbps"},
+  {id:"hudhaify", name:"علي الحذيفي", path:"Hudhaify_128kbps"},
+  {id:"husary", name:"محمود خليل الحصري", path:"Husary_128kbps"},
+  {id:"minshawi", name:"محمد صديق المنشاوي", path:"Minshawi_Mujawwad_128kbps"},
+  {id:"muaiqly", name:"ماهر المعيقلي", path:"Maher_AlMuaiqly_64kbps"},
+  {id:"ghamdi", name:"سعد الغامدي", path:"Ghamadi_40kbps"},
+  {id:"sudais", name:"عبد الرحمن السديس", path:"Abdurrahmaan_As-Sudais_192kbps"}
+];
 
     // Elements
     const E = {
@@ -789,22 +789,31 @@
     }
 
     async function loadAudio(q){
-      const primary = audioUrlEveryAyah(state.reciter,q.surah,q.verse);
-      const fallbacks = audioFallbacks(q.surah,q.verse);
-      const sources = [primary, ...fallbacks];
-      for(let i=0;i<sources.length;i++){
-        try{
-          E.player.src = sources[i];
-          await E.player.load();
-          await E.player.play();
-          return;
-        }catch(err){
-          if(i===sources.length-1){
-            console.log('Audio indisponible sur toutes les sources', err);
-          }
-        }
-      }
+  const primary = audioUrlEveryAyah(state.reciter, q.surah, q.verse);
+  
+  try {
+    E.player.src = primary;
+    await E.player.load();
+    await E.player.play();
+    console.log('✅ Audio chargé:', primary);
+  } catch(err) {
+    console.error('❌ Erreur audio pour', state.reciter, ':', err);
+    console.log('URL tentée:', primary);
+    
+    // Fallback vers Alafasy en dernier recours
+    const fallbackUrl = audioUrlEveryAyah('mishary', q.surah, q.verse);
+    try {
+      E.player.src = fallbackUrl;
+      await E.player.load();
+      await E.player.play();
+      console.log('⚠️ Fallback Alafasy utilisé');
+      alert('تعذر تحميل صوت القارئ المحدد. استخدام مشاري العفاسي بدلاً منه');
+    } catch(err2) {
+      console.error('❌ Fallback échoué aussi:', err2);
+      alert('خطأ في تحميل الصوت');
     }
+  }
+}
 
     // Ligne 553 (remplacez l’ancienne fonction showAudioInfo):
 async function showAudioInfo(){
