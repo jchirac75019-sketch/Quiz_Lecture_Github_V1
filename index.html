@@ -441,7 +441,7 @@
     // État
     let state = {
       startTime:null,endTime:null,activeMs:0,lastTick:null,active:true,timer:null,
-      ok:0,ko:0,questions:[],idx:0,mode:"text",reciter:"mishary",history:[]
+      ok:0,ko:0,questions:[],idx:0,mode:"text",reciter:"ghamdi",history:[]
     };
 
     // Wake Lock pour empêcher la mise en veille
@@ -503,7 +503,7 @@
       E.startVerse.value="1"; setEndMax();
       // récitateur
       for(const r of RECITERS){const o=document.createElement('option');o.value=r.id;o.textContent=`${r.name}`;E.reciter.appendChild(o)}
-      E.reciter.value="mishary";
+      E.reciter.value="ghamdi";
     }
 
     function bindEvents(){
@@ -801,13 +801,13 @@
     console.log('URL tentée:', primary);
     
     // Fallback vers Alafasy en dernier recours
-    const fallbackUrl = audioUrlEveryAyah('mishary', q.surah, q.verse);
+    const fallbackUrl = audioUrlEveryAyah('ghamdi', q.surah, q.verse);
     try {
       E.player.src = fallbackUrl;
       await E.player.load();
       await E.player.play();
       console.log('⚠️ Fallback Alafasy utilisé');
-      alert('تعذر تحميل صوت القارئ المحدد. استخدام مشاري العفاسي بدلاً منه');
+      alert('تعذر تحميل صوت القارئ المحدد. استخدام سعد الغامدي بدلاً منه');
     } catch(err2) {
       console.error('❌ Fallback échoué aussi:', err2);
       alert('خطأ في تحميل الصوت');
