@@ -397,17 +397,12 @@
       </div>
     </div>
 
-    <!-- Quiz -->
+        <!-- Quiz -->
     <div id="quiz" class="page">
       <div class="card">
-                        <div class="quiz-header">
+        <div class="quiz-header">
           <div class="badges">
-            <div class="badge">صحيح: <span id="ok" class="ok">0</span></div>
-            <div class="badge">خطأ: <span id="ko" class="ko">0</span></div>
-            <div class="badge">الوقت: <span id="time">00:00:00</span></div>
-            <div class="badge">السؤال: <span><span id="cur">1</span> / <span id="tot">0</span></span></div>
-            
-            <!-- LIVRE DU CORAN -->
+            <!-- LIVRE DU CORAN - EN PREMIER -->
             <div id="quranBook" class="quran-book">
               <div class="book-pages">
                 <!-- Page de droite (impaire) - À DROITE en lecture RTL -->
@@ -435,13 +430,19 @@
                 </div>
               </div>
             </div>
+
+            <!-- COMPTEURS - APRÈS LE LIVRE -->
+            <div class="badge">صحيح: <span id="ok" class="ok">0</span></div>
+            <div class="badge">خطأ: <span id="ko" class="ko">0</span></div>
+            <div class="badge">الوقت: <span id="time">00:00:00</span></div>
+            <div class="badge">السؤال: <span><span id="cur">1</span> / <span id="tot">0</span></span></div>
           </div>
           <button id="homeBtn" class="btn btn-neutral">العودة للرئيسية</button>
         </div>
 
-
         <div class="qwrap">
           <div id="qCounter" class="qcounter"></div>
+
 
           <!-- Mode texte -->
           <div id="textMode">
