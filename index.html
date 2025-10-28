@@ -187,6 +187,136 @@
       .qtext,.verset,.history .item{background:rgba(30,41,59,.95);color:#e5e7eb}
       select,input[type=number]{background:#0f172a;color:#f8fafc;border-color:#334155}
     }
+
+    /* ====== LIVRE DU CORAN - Deux pages ====== */
+.quran-book {
+  display: none; /* Caché par défaut, visible uniquement quand la réponse s'affiche */
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.12);
+  perspective: 1000px;
+  /* DIMENSIONS DU LIVRE - Modifiables ici */
+  width: 110px;   /* Largeur totale - AJUSTABLE */
+  height: 42px;  /* Hauteur totale - AJUSTABLE */
+}
+
+.quran-book.show {
+  display: block;
+}
+
+.book-pages {
+  display: flex;
+  gap: 4px;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+/* Reliure centrale */
+.book-pages::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, #8b7355 0%, #6b5745 50%, #8b7355 100%);
+  transform: translateX(-50%);
+  box-shadow: inset 0 0 8px rgba(0,0,0,.3);
+  z-index: 10;
+}
+
+/* Page individuelle */
+.book-page {
+  flex: 1;
+  background: #fffef7;
+  border: 2px solid #d4af37;
+  border-radius: 4px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  box-shadow: inset 0 0 15px rgba(212,175,55,.1);
+}
+
+/* Page de gauche (paire) */
+.book-page.left {
+  border-right: none;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Page de droite (impaire) */
+.book-page.right {
+  border-left: none;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* Page vide (grisée) */
+.book-page.empty {
+  background: #f5f5f0;
+  border-color: #e0e0d8;
+}
+
+/* Numéro de page - Grand et centré */
+.page-number {
+  font-family: 'Amiri', serif;
+  font-size: 19px;  /* Taille du numéro - AJUSTABLE */
+  font-weight: 700;
+  color: var(--blue);
+  z-index: 5;
+  text-shadow: 0 1px 2px rgba(0,0,0,.1);
+}
+
+/* Lignes de texte suggérant le contenu */
+.page-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 12px 8px;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.page-line {
+  width: 100%;
+  height: 0.2px;  /* Épaisseur des lignes - AJUSTABLE */
+  background: #8b7355;
+  border-radius: 1px;
+}
+
+/* Indicateur visuel : bordure épaisse sur la page active */
+.book-page.active {
+  border-width: 3px;
+  border-color: var(--blue);
+  box-shadow: 0 0 12px rgba(30,64,175,.3);
+}
+
+/* Responsive : réduire sur mobile */
+@media (max-width: 768px) {
+  .quran-book {
+    width: 160px;   /* Largeur mobile - AJUSTABLE */
+    height: 80px;   /* Hauteur mobile - AJUSTABLE */
+  }
+  
+  .page-number {
+    font-size: 22px;  /* Taille numéro mobile - AJUSTABLE */
+  }
+  
+  .page-line {
+    height: 1.5px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -268,15 +398,45 @@
     <!-- Quiz -->
     <div id="quiz" class="page">
       <div class="card">
-        <div class="quiz-header">
+                        <div class="quiz-header">
           <div class="badges">
             <div class="badge">صحيح: <span id="ok" class="ok">0</span></div>
             <div class="badge">خطأ: <span id="ko" class="ko">0</span></div>
             <div class="badge">الوقت: <span id="time">00:00:00</span></div>
             <div class="badge">السؤال: <span><span id="cur">1</span> / <span id="tot">0</span></span></div>
+            
+            <!-- LIVRE DU CORAN -->
+            <div id="quranBook" class="quran-book">
+              <div class="book-pages">
+                <!-- Page de droite (impaire) - À DROITE en lecture RTL -->
+                <div id="rightPage" class="book-page right empty">
+                  <div class="page-lines">
+                    <div class="page-line"></div>
+                    <div class="page-line"></div>
+                    <div class="page-line"></div>
+                    <div class="page-line"></div>
+                    <div class="page-line"></div>
+                  </div>
+                  <div id="rightPageNum" class="page-number"></div>
+                </div>
+                
+                <!-- Page de gauche (paire) - À GAUCHE en lecture RTL -->
+                <div id="leftPage" class="book-page left empty">
+                  <div class="page-lines">
+                    <div class="page-line"></div>
+                    <div class="page-line"></div>
+                    <div class="page-line"></div>
+                    <div class="page-line"></div>
+                    <div class="page-line"></div>
+                  </div>
+                  <div id="leftPageNum" class="page-number"></div>
+                </div>
+              </div>
+            </div>
           </div>
           <button id="homeBtn" class="btn btn-neutral">العودة للرئيسية</button>
         </div>
+
 
         <div class="qwrap">
           <div id="qCounter" class="qcounter"></div>
@@ -434,8 +594,11 @@
       info:byId('info'),tAudio:byId('tAudio'),sAudio:byId('sAudio'),nAudio:byId('nAudio'),pAudio:byId('pAudio'),jAudio:byId('jAudio'),
       answersAudio:byId('answersAudio'),okBtn2:byId('okBtn2'),koBtn2:byId('koBtn2'),next2:byId('next2'),
       fOk:byId('fOk'),fKo:byId('fKo'),fTime:byId('fTime'),tStart:byId('tStart'),tEnd:byId('tEnd'),pct:byId('pct'),hist:byId('hist'),
-      newQuiz:byId('newQuiz'),nosleep:byId('nosleep'),qCounter:byId('qCounter'),textMode:byId('textMode'),audioMode:byId('audioMode')
+      newQuiz:byId('newQuiz'),nosleep:byId('nosleep'),qCounter:byId('qCounter'),textMode:byId('textMode'),audioMode:byId('audioMode'),
+      quranBook:byId('quranBook'),leftPage:byId('leftPage'),rightPage:byId('rightPage'),
+      leftPageNum:byId('leftPageNum'),rightPageNum:byId('rightPageNum')
     };
+
     function byId(id){return document.getElementById(id)}
 
     // État
@@ -489,8 +652,6 @@
    // Service Worker inline
       registerSWInline();
   
-      precacheAudios();
-
    // Restaurer l'état si l'utilisateur revient après avoir quitté l'app
       restoreQuizIfNeeded();
     });
@@ -713,10 +874,14 @@
       return `${h}:${m}:${ss}`;
     }
 
-    function showQuestion(){
+        function showQuestion(){
       if(state.idx>=state.questions.length){ return endQuiz(); }
       const q=state.questions[state.idx];
       E.cur.textContent = (state.idx+1).toString();
+      
+      // Cacher le livre au début de chaque nouvelle question
+      hideQuranBook();
+      
       if(state.mode==="text"){
         // afficher ref
         E.textMode.style.display='block'; E.audioMode.style.display='none';
@@ -731,30 +896,39 @@
       }
     }
 
-    async function showVerseText(){
+        async function showVerseText(){
   const q = state.questions[state.idx];
   E.vText.innerHTML = '<span class="loading"></span>';
   E.vText.style.display = 'block';
   
   try {
-    // API texte AlQuran.cloud (format standard)
-    const url = `https://api.alquran.cloud/v1/ayah/${q.surah}:${q.verse}/ar.uthmani`;
+    // API Quran.com v4 pour texte + page + juz (même endpoint que le mode audio)
+    const url = `https://api.quran.com/api/v4/verses/by_key/${q.surah}:${q.verse}?language=ar&fields=text_uthmani,page_number,juz_number`;
     const r = await fetch(url, {cache: 'force-cache'});
     const j = await r.json();
     
     // Vérification de la structure de réponse
-    if (j && j.data && j.data.text) {
-      const text = j.data.text;
+    if (j && j.verse && j.verse.text_uthmani) {
+      const text = j.verse.text_uthmani;
+      const pageNum = j.verse.page_number;
       
-      // Stocker les informations pour le mode audio
+      // Stocker les informations pour référence
       window.currentAyahInfo = {
         text: text,
         surah: q.surah,
         verse: q.verse,
-        name: q.name
+        name: q.name,
+        page: pageNum,
+        juz: j.verse.juz_number
       };
       
       E.vText.innerHTML = `<div style="font-size:24px;line-height:1.9;color:#0f172a">${text}</div>`;
+      
+      // *** AFFICHER LE LIVRE AVEC LE NUMÉRO DE PAGE ***
+      if (pageNum) {
+        displayQuranBook(pageNum);
+      }
+      
     } else {
       throw new Error('Structure de réponse API invalide');
     }
@@ -770,6 +944,12 @@
       verse: q.verse,
       name: q.name
     };
+    
+    // Essayer d'afficher le livre avec la page approximative en fallback
+    const approxPageNum = approxPage(q.surah, q.verse);
+    if (approxPageNum) {
+      displayQuranBook(approxPageNum);
+    }
   }
   
   E.answersText.style.display = 'flex';
@@ -792,27 +972,27 @@
 
     async function loadAudio(q){
   const primary = audioUrlEveryAyah(state.reciter, q.surah, q.verse);
-  const fallbacks = audioFallbacks(q.surah, q.verse);
-  const sources = [primary, ...fallbacks];
   
-  for(let i = 0; i < sources.length; i++){
+  try {
+    E.player.src = primary;
+    await E.player.load();
+    await E.player.play();
+    console.log('✅ Audio chargé:', primary);
+  } catch(err) {
+    console.error('❌ Erreur audio pour', state.reciter, ':', err);
+    console.log('URL tentée:', primary);
+    
+    // Fallback vers Alafasy en dernier recours
+    const fallbackUrl = audioUrlEveryAyah('ghamdi', q.surah, q.verse);
     try {
-      const response = await fetch(sources[i]);
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      
-      const blob = await response.blob();
-      const audioUrl = URL.createObjectURL(blob);
-      E.player.src = audioUrl;
+      E.player.src = fallbackUrl;
       await E.player.load();
       await E.player.play();
-      console.log('✅ Audio chargé:', sources[i]);
-      return;
-    } catch(err) {
-      console.warn(`⚠️ Source ${i+1} échouée:`, err.message);
-      if(i === sources.length - 1) {
-        console.error('❌ Audio indisponible (hors ligne ou source manquante)');
-        alert('الصوت غير متاح. تأكد من اتصالك بالإنترنت أو أنك قد قمت بتحميل الصوت مسبقاً');
-      }
+      console.log('⚠️ Fallback Alafasy utilisé');
+      alert('تعذر تحميل صوت القارئ المحدد. استخدام سعد الغامدي بدلاً منه');
+    } catch(err2) {
+      console.error('❌ Fallback échoué aussi:', err2);
+      alert('خطأ في تحميل الصوت');
     }
   }
 }
@@ -839,6 +1019,10 @@ async function showAudioInfo(){
     E.tAudio.textContent = v.text_uthmani;
     E.pAudio.textContent = v.page_number;
     E.jAudio.textContent = v.juz_number;
+    
+    // *** AFFICHER LE LIVRE AVEC LE NUMÉRO DE PAGE ***
+    displayQuranBook(v.page_number);
+    
   } catch(e) {
     console.error('Erreur showAudioInfo:', e);
     // fallback
@@ -846,12 +1030,61 @@ async function showAudioInfo(){
     E.tAudio.textContent = info.text || "النص غير متاح";
     E.pAudio.textContent = info.page || "؟";
     E.jAudio.textContent = info.juz  || "؟";
+    
+    // Tenter d'afficher le livre même en fallback
+    if (info.page && !isNaN(info.page)) {
+      displayQuranBook(parseInt(info.page));
+    }
   }
   
   E.info.style.display         = 'block';
   E.answersAudio.style.display = 'flex';
   E.showInfo.style.display     = 'none';
 }
+
+        // Afficher le livre du Coran avec le numéro de page
+    function displayQuranBook(pageNumber) {
+      if (!pageNumber || pageNumber < 1 || pageNumber > 604) {
+        E.quranBook.classList.remove('show');
+        return;
+      }
+      
+      const isOdd = pageNumber % 2 !== 0; // Impair = page de droite
+      
+      if (isOdd) {
+        // Page IMPAIRE (droite) - afficher à droite, gauche vide
+        E.rightPage.classList.remove('empty');
+        E.rightPage.classList.add('active');
+        E.rightPageNum.textContent = pageNumber;
+        
+        E.leftPage.classList.add('empty');
+        E.leftPage.classList.remove('active');
+        E.leftPageNum.textContent = '';
+      } else {
+        // Page PAIRE (gauche) - afficher à gauche, droite vide
+        E.leftPage.classList.remove('empty');
+        E.leftPage.classList.add('active');
+        E.leftPageNum.textContent = pageNumber;
+        
+        E.rightPage.classList.add('empty');
+        E.rightPage.classList.remove('active');
+        E.rightPageNum.textContent = '';
+      }
+      
+      // Afficher le livre
+      E.quranBook.classList.add('show');
+    }
+    
+    // Cacher le livre du Coran
+    function hideQuranBook() {
+      E.quranBook.classList.remove('show');
+      E.leftPage.classList.add('empty');
+      E.rightPage.classList.add('empty');
+      E.leftPage.classList.remove('active');
+      E.rightPage.classList.remove('active');
+      E.leftPageNum.textContent = '';
+      E.rightPageNum.textContent = '';
+    }
 
     function approxPage(surah,verse){
       // Règles connues exigées:
@@ -919,86 +1152,27 @@ async function showAudioInfo(){
 
     // Service Worker inline (cache de base)
     function registerSWInline(){
-  if(!('serviceWorker' in navigator)) return;
-  const swCode = `
-    const CACHE='quiz-coran-v2';
-    const CORE=['./','./index.html'];
-    
-    self.addEventListener('install',e=>{
-      e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE).catch(()=>{})));
-      self.skipWaiting();
-    });
-    
-    self.addEventListener('activate',e=>{
-      e.waitUntil(caches.keys().then(keys=>Promise.all(keys.map(k=>k!==CACHE&&caches.delete(k)))));
-      self.clients.claim();
-    });
-    
-    self.addEventListener('fetch',e=>{
-      const url=new URL(e.request.url);
-      
-      // Local resources: network first, then cache
-      if(url.origin===location.origin){
-        e.respondWith(
-          fetch(e.request)
-            .then(res=>{
-              if(!res || res.status!==200 || res.type==='error') return res;
-              const copy=res.clone();
-              caches.open(CACHE).then(c=>c.put(e.request,copy));
-              return res;
-            })
-            .catch(()=>caches.match(e.request).then(r=>r||caches.match('./index.html')))
-        );
-      }
-      // External APIs & Audio: cache first, then network
-      else if(url.hostname.includes('everyayah') || url.hostname.includes('alquran') || url.hostname.includes('islamic.network')){
-        e.respondWith(
-          caches.match(e.request)
-            .then(r=>r||fetch(e.request).then(res=>{
-              if(res && res.status===200){
-                const copy=res.clone();
-                caches.open(CACHE).then(c=>c.put(e.request,copy));
-              }
-              return res;
-            }).catch(()=>new Response('Ressource non disponible hors ligne',{status:503})))
-        );
-      }
-      // Autres requêtes: network first
-      else{
-        e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));
-      }
-    });
-  `;
-  const blob = new Blob([swCode],{type:'application/javascript'});
-  const url = URL.createObjectURL(blob);
-  navigator.serviceWorker.register(url).catch(console.warn);
-}
-
-async function precacheAudios() {
-  if (!('caches' in window)) return;
-  
-  const cache = await caches.open('quiz-coran-v2');
-  const reciters = ['Alafasy_128kbps', 'Abu_Bakr_Ash-Shaatree_128kbps', 'Ghamadi_40kbps'];
-  
-  // Pré-cache quelques versets populaires (Sourate 1, versets 1-7)
-  for (let surah = 1; surah <= 1; surah++) {
-    for (let verse = 1; verse <= 7; verse++) {
-      const s = String(surah).padStart(3, '0');
-      const v = String(verse).padStart(3, '0');
-      
-      for (const reciter of reciters) {
-        const url = `https://everyayah.com/data/${reciter}/${s}${v}.mp3`;
-        try {
-          const res = await fetch(url);
-          if (res.ok) await cache.put(url, res);
-        } catch (e) {
-          console.log(`Pré-cache échoué pour ${reciter}/${s}${v}`);
-        }
-      }
+      if(!('serviceWorker' in navigator)) return;
+      const swCode = `
+        const CACHE='quiz-coran-v1';
+        const CORE=['./','./index.html'];
+        self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)))});
+        self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.map(k=>k!==CACHE&&caches.delete(k)))))});
+        self.addEventListener('fetch',e=>{
+          const url=new URL(e.request.url);
+          if(url.origin===location.origin){
+            e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
+              const copy=res.clone(); caches.open(CACHE).then(c=>c.put(e.request,copy)); return res;
+            }).catch(()=>caches.match('./index.html'))));
+          }else{
+            e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));
+          }
+        });
+      `;
+      const blob = new Blob([swCode],{type:'application/javascript'});
+      const url = URL.createObjectURL(blob);
+      navigator.serviceWorker.register(url).catch(console.warn);
     }
-  }
-  console.log('✅ Pré-cache des audios terminé');
-}
   </script>
 </body>
 </html>
