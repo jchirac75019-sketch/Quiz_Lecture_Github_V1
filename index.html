@@ -8,7 +8,7 @@
   <!-- Manifest inline (data URL) -->
   <link rel="manifest" href='data:application/json,{"name":"Quiz Coran - تطبيق اختبار القرآن","short_name":"Quiz Coran","description":"PWA quiz des versets coraniques (Hafs 604 pages)","start_url":"/","display":"standalone","orientation":"portrait","theme_color":"#1e40af","background_color":"#ffffff","scope":"/","lang":"ar","dir":"rtl"}'>
 <link rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
+      href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="style.css">
 
   <style>
@@ -50,16 +50,17 @@
     .badge{
   background:#fff;
   border-radius:12px;
-  padding:8px 12px;
+  padding:4px 8px;           /* ⬅️ RÉDUIT LE PADDING VERTICAL */
   box-shadow:0 4px 14px rgba(0,0,0,.08);
   font-weight:700;
   color:#374151;
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:4px;
+  gap:2px;                    /* ⬅️ RÉDUIT L'ESPACE ENTRE TITRE ET VALEUR */
   min-width:80px;
   text-align:center;
+  line-height:1.2;            /* ⬅️ RÉDUIT LA HAUTEUR DES LIGNES */
 }
 
     .badge .ok{color:var(--green)} .badge .ko{color:var(--red)}
@@ -331,6 +332,41 @@
   .page-line {
     height: 1px;
   }
+}
+
+/* Police élégante pour les éléments arabes */
+.badge, .badge div {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.badge div:first-child {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.badge div:last-child {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--blue);
+}
+
+.qtext {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.quiz-header h3 {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 700;
+}
+
+.btn {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 700;
 }
 
   </style>
