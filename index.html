@@ -47,7 +47,21 @@
     .btn:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.18)}
     .quiz-header{display:flex;justify-content:space-between;align-items:center;gap:12px}
     .badges{display:flex;flex-wrap:nowrap;gap:8px;align-items:center;overflow-x:auto}
-    .badge{background:#fff;border-radius:12px;padding:10px 12px;box-shadow:0 4px 14px rgba(0,0,0,.08);font-weight:700;color:#374151}
+    .badge{
+  background:#fff;
+  border-radius:12px;
+  padding:8px 12px;
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+  font-weight:700;
+  color:#374151;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  min-width:80px;
+  text-align:center;
+}
+
     .badge .ok{color:var(--green)} .badge .ko{color:var(--red)}
     .qwrap{min-height:360px}
     .qcounter{text-align:center;color:#64748b;font-weight:700;margin-bottom:14px}
@@ -431,11 +445,24 @@
               </div>
             </div>
 
-            <!-- COMPTEURS - APRÈS LE LIVRE -->
-            <div class="badge">صحيح: <span id="ok" class="ok">0</span></div>
-            <div class="badge">خطأ: <span id="ko" class="ko">0</span></div>
-            <div class="badge">الوقت: <span id="time">00:00:00</span></div>
-            <div class="badge">السؤال: <span><span id="cur">1</span> / <span id="tot">0</span></span></div>
+                        <!-- COMPTEURS - APRÈS LE LIVRE -->
+            <div class="badge">
+              <div>صحيح:</div>
+              <div><span id="ok" class="ok">0</span></div>
+            </div>
+            <div class="badge">
+              <div>خطأ:</div>
+              <div><span id="ko" class="ko">0</span></div>
+            </div>
+            <div class="badge">
+              <div>الوقت:</div>
+              <div><span id="time">00:00:00</span></div>
+            </div>
+            <div class="badge">
+              <div>السؤال:</div>
+              <div><span id="cur">1</span> / <span id="tot">0</span></div>
+            </div>
+
           </div>
           <button id="homeBtn" class="btn btn-neutral">العودة للرئيسية</button>
         </div>
