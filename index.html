@@ -304,8 +304,10 @@
 /* Responsive : réduire sur mobile */
 @media (max-width: 768px) {
   .quran-book {
-    width: 130px;   /* Largeur mobile - AJUSTABLE */
-    height: 50px;   /* Hauteur mobile - AJUSTABLE */
+    width: 120px;   /* Réduit davantage la largeur - AJUSTABLE */
+    height: 60px;   /* Réduit davantage la hauteur - AJUSTABLE */
+    padding: 4px;   /* Padding réduit */
+    flex-shrink: 0; /* ⬅️ EMPÊCHE LE LIVRE DE SE REDIMENSIONNER */
   }
   
   .page-number {
@@ -313,7 +315,7 @@
   }
   
   .page-line {
-    height: 1.5px;
+    height: 1px;
   }
 }
 
