@@ -103,13 +103,6 @@
   font-weight: 700;
 }
 
-/* Fond jaune pour le numéro du verset */
-#info div span#nAudio {
-  background-color: #ffeb3b;  /* jaune clair */
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
 /* Verset coranique sur une ligne, scroll horizontal */
 #info > div:first-child span#tAudio {
   display: inline-block;
@@ -375,9 +368,41 @@
   background-color: #ffeb3b;  /* jaune clair */
   padding: 2px 6px;
   border-radius: 4px;
-  color: var(--red);           /* ⬅️ ROUGE au lieu de bleu */
-  font-weight: 700;
-  font-size: 24px;             /* ⬅️ TAILLE AUGMENTÉE - AJUSTABLE */
+  color: #991b1b;           /* ⬅️ ROUGE au lieu de bleu */ /* color: var(--red); */
+  font-weight: 900;           /* ⬅️ AUGMENTÉ POUR PLUS GRAS */
+  font-size: 29px;             /* ⬅️ TAILLE AUGMENTÉE - AJUSTABLE */
+}
+
+.btn-book {
+  background: #fff !important;
+  border: 2px solid var(--blue) !important;
+  box-shadow: 0 2px 8px rgba(30,64,175,.15);
+  min-width: 44px !important;
+  width: 74px !important;
+  height: 54px !important;
+  padding: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 12px !important;
+  transition: all 0.2s ease;
+}
+
+.btn-book:hover {
+  background: #eff6ff !important;
+  box-shadow: 0 4px 12px rgba(30,64,175,.25) !important;
+  transform: translateY(-2px);
+}
+
+.btn-book:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(30,64,175,.15) !important;
+}
+
+.btn-book svg {
+  display: block;
+  width: 24px;
+  height: 24px;
 }
 
   </style>
@@ -525,8 +550,16 @@
             </div>
             <div id="vText" class="verset" style="display:none"></div>
             <div class="controls">
-              <button id="showVerse" class="btn btn-primary">عرض النص</button>
-              <div id="answersText" style="display:none;display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+  <button id="showBookBtn1" class="btn btn-book" title="عرض رقم الصفحة">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+  </svg>
+</button>
+
+  <button id="showVerse" class="btn btn-primary">عرض النص</button>
+  <div id="answersText" style="display:none;display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+
                 <button id="okBtn1" class="btn btn-green">إجابة صحيحة</button>
                 <button id="koBtn1" class="btn btn-red">إجابة خاطئة</button>
               </div>
@@ -550,8 +583,16 @@
               <div>رقم الجزء: <span id="jAudio" class="blue"></span></div>
             </div>
             <div class="controls">
-              <button id="showInfo" class="btn btn-primary">عرض المعلومات</button>
-              <div id="answersAudio" style="display:none;display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+  <button id="showBookBtn2" class="btn btn-book" title="عرض رقم الصفحة">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+  </svg>
+</button>
+
+  <button id="showInfo" class="btn btn-primary">عرض المعلومات</button>
+  <div id="answersAudio" style="display:none;display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+
                 <button id="okBtn2" class="btn btn-green">إجابة صحيحة</button>
                 <button id="koBtn2" class="btn btn-red">إجابة خاطئة</button>
               </div>
@@ -666,8 +707,9 @@
       totalVerses:byId('totalVerses'),startBtn:byId('startBtn'),
       homeBtn:byId('homeBtn'),ok:byId('ok'),ko:byId('ko'),time:byId('time'),cur:byId('cur'),tot:byId('tot'),
       vNum:byId('vNum'),sName:byId('sName'),vText:byId('vText'),showVerse:byId('showVerse'),
+      showBookBtn1:byId('showBookBtn1'),
       answersText:byId('answersText'),okBtn1:byId('okBtn1'),koBtn1:byId('koBtn1'),next1:byId('next1'),
-      player:byId('player'),replay:byId('replay'),showInfo:byId('showInfo'),
+      player:byId('player'),replay:byId('replay'),showInfo:byId('showInfo'),showBookBtn2:byId('showBookBtn2'),
       info:byId('info'),tAudio:byId('tAudio'),sAudio:byId('sAudio'),nAudio:byId('nAudio'),pAudio:byId('pAudio'),jAudio:byId('jAudio'),
       answersAudio:byId('answersAudio'),okBtn2:byId('okBtn2'),koBtn2:byId('koBtn2'),next2:byId('next2'),
       fOk:byId('fOk'),fKo:byId('fKo'),fTime:byId('fTime'),tStart:byId('tStart'),tEnd:byId('tEnd'),pct:byId('pct'),hist:byId('hist'),
@@ -776,7 +818,50 @@
       document.addEventListener('visibilitychange', ()=>{if(document.hidden) pauseTimer(); else resumeTimer();});
       window.addEventListener('blur', pauseTimer);
       window.addEventListener('focus', resumeTimer);
+
+            // visibility → pause
+      document.addEventListener('visibilitychange', ()=>{if(document.hidden) pauseTimer(); else resumeTimer();});
+      window.addEventListener('blur', pauseTimer);
+      window.addEventListener('focus', resumeTimer);
+      
+      // --- Boutons livre temporaires (nouveaux) ---
+E.showBookBtn1.addEventListener('click', showBookTemporary);
+E.showBookBtn2.addEventListener('click', showBookTemporary);
+
+// Disparition automatique des boutons dès que l'affichage principal est déclenché
+E.showVerse.addEventListener('click', () => {
+  E.showBookBtn1.style.display = 'none';
+});
+E.showInfo.addEventListener('click', () => {
+  E.showBookBtn2.style.display = 'none';
+});
+
     }
+
+      // --- Nouveau : Affichage livre temporaire ---
+async function showBookTemporary() {
+  const q = state.questions[state.idx];
+  
+  try {
+    // Récupérer le numéro de page via l'API
+    const url = `https://api.quran.com/api/v4/verses/by_key/${q.surah}:${q.verse}?language=ar&fields=page_number`;
+    const res = await fetch(url);
+    const json = await res.json();
+    const pageNum = json.verse.page_number;
+    
+    // Afficher le livre avec le numéro de page
+    displayQuranBook(pageNum);
+    
+  } catch(e) {
+    console.error('Erreur showBookTemporary:', e);
+    // Fallback : page approximative
+    const approxPageNum = approxPage(q.surah, q.verse);
+    if (approxPageNum) {
+      displayQuranBook(approxPageNum);
+    }
+  }
+}
+
 
     function toggleReciter(){
       const isAudio = E.mode.value==="audio";
@@ -950,7 +1035,7 @@
       const ss=String(s%60).padStart(2,'0');
       return `${h}:${m}:${ss}`;
     }
-
+ 
         function showQuestion(){
       if(state.idx>=state.questions.length){ return endQuiz(); }
       const q=state.questions[state.idx];
@@ -971,6 +1056,10 @@
         E.info.style.display='none'; E.answersAudio.style.display='none'; E.next2.style.display='none'; E.showInfo.style.display='inline-block';
         loadAudio(q);
       }
+      
+      // --- Réafficher les boutons livre au début de chaque question ---
+      if(E.showBookBtn1) E.showBookBtn1.style.display = (state.mode==="text") ? "inline-block" : "none";
+      if(E.showBookBtn2) E.showBookBtn2.style.display = (state.mode==="audio") ? "inline-block" : "none";
     }
 
         async function showVerseText(){
