@@ -68,7 +68,6 @@
     .qwrap{min-height:360px}
     .qcounter{text-align:center;color:#64748b;font-weight:700;margin-bottom:14px}
     .qtext{text-align:center;font-weight:700;line-height:1.7;background:#fff;border-radius:14px;padding:18px;border-right:5px solid var(--blue)}
-    .verset,.info{background:#f8fafc;border-radius:14px;padding:18px;border-right:5px solid var(--blue);margin:14px 0;text-align:center}
 
 .verset, .info {
   font-family: 'Amiri', serif;       /* Police coranique élégante */
@@ -117,14 +116,6 @@
   overflow-x: auto;
   max-width: 100vw;
   white-space: nowrap;
-}
-
-/* Fond jaune pour numéro du verset et nom de la sourate en mode texte */
-#textMode .qtext span#vNum,
-#textMode .qtext span#sName {
-  background-color: #fff9c4;  /* jaune très clair */
-  border-radius: 4px;
-  padding: 2px 6px;
 }
 
 /* Mode texte : verset et nom de la sourate en gras et taille augmentée */
@@ -789,54 +780,43 @@
     }
 
     function bindEvents(){
-      E.startSurah.addEventListener('change', ()=>{clearQuizState(); validateStart();updateTotals()});
-      E.endSurah.addEventListener('change', ()=>{clearQuizState(); setEndMax();validateEnd();updateTotals()});
-      E.startVerse.addEventListener('input', ()=>{clearQuizState(); validateStart();updateTotals()});
-      E.endVerse.addEventListener('input', ()=>{clearQuizState(); validateEnd();updateTotals()});
-      E.mode.addEventListener('change', ()=>{clearQuizState(); toggleReciter()});
-      E.attempts.addEventListener('change', ()=>{clearQuizState()});
-      E.reciter.addEventListener('change', ()=>{clearQuizState()});
+  E.startSurah.addEventListener('change', ()=>{clearQuizState(); validateStart();updateTotals()});
+  E.endSurah.addEventListener('change', ()=>{clearQuizState(); setEndMax();validateEnd();updateTotals()});
+  E.startVerse.addEventListener('input', ()=>{clearQuizState(); validateStart();updateTotals()});
+  E.endVerse.addEventListener('input', ()=>{clearQuizState(); validateEnd();updateTotals()});
+  E.mode.addEventListener('change', ()=>{clearQuizState(); toggleReciter()});
+  E.attempts.addEventListener('change', ()=>{clearQuizState()});
+  E.reciter.addEventListener('change', ()=>{clearQuizState()});
 
-      E.startBtn.addEventListener('click', startQuiz);
-      E.homeBtn.addEventListener('click', () => goto('home'));
-      E.newQuiz.addEventListener('click', () => goto('home'));
+  E.startBtn.addEventListener('click', startQuiz);
+  E.homeBtn.addEventListener('click', () => goto('home'));
+  E.newQuiz.addEventListener('click', () => goto('home'));
 
-      // texte
-      E.showVerse.addEventListener('click', showVerseText);
-      E.okBtn1.addEventListener('click', ()=>record(true));
-      E.koBtn1.addEventListener('click', ()=>record(false));
-      E.next1.addEventListener('click', next);
+  // texte
+  E.showVerse.addEventListener('click', showVerseText);
+  E.okBtn1.addEventListener('click', ()=>record(true));
+  E.koBtn1.addEventListener('click', ()=>record(false));
+  E.next1.addEventListener('click', next);
 
-      // audio
-      E.replay.addEventListener('click', ()=>{E.player.currentTime=0;E.player.play().catch(()=>{})});
-      E.showInfo.addEventListener('click', showAudioInfo);
-      E.okBtn2.addEventListener('click', ()=>record(true));
-      E.koBtn2.addEventListener('click', ()=>record(false));
-      E.next2.addEventListener('click', next);
+  // audio
+  E.replay.addEventListener('click', ()=>{E.player.currentTime=0;E.player.play().catch(()=>{})});
+  E.showInfo.addEventListener('click', showAudioInfo);
+  E.okBtn2.addEventListener('click', ()=>record(true));
+  E.koBtn2.addEventListener('click', ()=>record(false));
+  E.next2.addEventListener('click', next);
+  
+  // --- Boutons livre temporaires (nouveaux) ---
+  E.showBookBtn1.addEventListener('click', showBookTemporary);
+  E.showBookBtn2.addEventListener('click', showBookTemporary);
 
-      // visibility → pause
-      document.addEventListener('visibilitychange', ()=>{if(document.hidden) pauseTimer(); else resumeTimer();});
-      window.addEventListener('blur', pauseTimer);
-      window.addEventListener('focus', resumeTimer);
-
-            // visibility → pause
-      document.addEventListener('visibilitychange', ()=>{if(document.hidden) pauseTimer(); else resumeTimer();});
-      window.addEventListener('blur', pauseTimer);
-      window.addEventListener('focus', resumeTimer);
-      
-      // --- Boutons livre temporaires (nouveaux) ---
-E.showBookBtn1.addEventListener('click', showBookTemporary);
-E.showBookBtn2.addEventListener('click', showBookTemporary);
-
-// Disparition automatique des boutons dès que l'affichage principal est déclenché
-E.showVerse.addEventListener('click', () => {
-  E.showBookBtn1.style.display = 'none';
-});
-E.showInfo.addEventListener('click', () => {
-  E.showBookBtn2.style.display = 'none';
-});
-
-    }
+    // ⬅️ MASQUER LES BOUTONS QUAND ON AFFICHE LE TEXTE/SON (avec délai pour éviter les conflicts)
+  E.showVerse.addEventListener('click', () => {
+    setTimeout(() => { E.showBookBtn1.style.display = 'none'; }, 50);
+  });
+  E.showInfo.addEventListener('click', () => {
+    setTimeout(() => { E.showBookBtn2.style.display = 'none'; }, 50);
+  });
+}
 
       // --- Nouveau : Affichage livre temporaire ---
 async function showBookTemporary() {
@@ -860,8 +840,16 @@ async function showBookTemporary() {
       displayQuranBook(approxPageNum);
     }
   }
+  
+    // ⬅️ MASQUER LE BOUTON APRÈS AFFICHAGE
+  if(state.mode === "text") {
+    E.showBookBtn1.style.display = 'none';
+    E.showBookBtn1.disabled = true;
+  } else {
+    E.showBookBtn2.style.display = 'none';
+    E.showBookBtn2.disabled = true;
+  }
 }
-
 
     function toggleReciter(){
       const isAudio = E.mode.value==="audio";
@@ -1060,6 +1048,8 @@ async function showBookTemporary() {
       // --- Réafficher les boutons livre au début de chaque question ---
       if(E.showBookBtn1) E.showBookBtn1.style.display = (state.mode==="text") ? "inline-block" : "none";
       if(E.showBookBtn2) E.showBookBtn2.style.display = (state.mode==="audio") ? "inline-block" : "none";
+      if(E.showBookBtn1) E.showBookBtn1.disabled = false;
+      if(E.showBookBtn2) E.showBookBtn2.disabled = false;
     }
 
         async function showVerseText(){
@@ -1120,6 +1110,7 @@ async function showBookTemporary() {
   
   E.answersText.style.display = 'flex';
   E.showVerse.style.display = 'none';
+  E.showBookBtn1.style.display = 'none';
 }
 
     function audioUrlEveryAyah(reciterId,surah,verse){
@@ -1128,14 +1119,7 @@ async function showBookTemporary() {
       const v = String(verse).padStart(3,'0');
       return `https://everyayah.com/data/${r.path}/${s}${v}.mp3`;
     }
-    function audioFallbacks(surah,verse){
-      // Fallback alquran.cloud (media per ayah)
-      return [
-        `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${surah}${String(verse).padStart(3,'0')}.mp3`,
-        `https://api.alquran.cloud/v1/ayah/${surah}:${verse}/ar.alafasy` // media endpoint accepte GET -> redirection/JSON; gardé en secours
-      ];
-    }
-
+    
     async function loadAudio(q){
   const primary = audioUrlEveryAyah(state.reciter, q.surah, q.verse);
   
@@ -1206,6 +1190,7 @@ async function showAudioInfo(){
   E.info.style.display         = 'block';
   E.answersAudio.style.display = 'flex';
   E.showInfo.style.display     = 'none';
+  E.showBookBtn2.style.display = 'none';
 }
 
         // Afficher le livre du Coran avec le numéro de page
