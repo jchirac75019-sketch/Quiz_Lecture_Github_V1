@@ -827,7 +827,13 @@
   E.showInfo.addEventListener('click', showAudioInfo);
   E.okBtn2.addEventListener('click', ()=>record(true));
   E.koBtn2.addEventListener('click', ()=>record(false));
-  E.next2.addEventListener('click', next);
+    E.next2.addEventListener('click', next);
+  
+  // visibility → pause
+  document.addEventListener('visibilitychange', ()=>{if(document.hidden) pauseTimer(); else resumeTimer();});
+  window.addEventListener('blur', pauseTimer);
+  window.addEventListener('focus', resumeTimer);
+}
   
   // --- Boutons livre temporaires (nouveaux) ---
   E.showBookBtn1.addEventListener('click', showBookTemporary);
