@@ -170,7 +170,7 @@
   }
 }
 
-    .controls{text-align:center;margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+        .controls{text-align:center;margin-top:12px;display:flex;gap:10px;flex-wrap:nowrap;justify-content:center;align-items:center;overflow-x:auto}
     .audio{margin-bottom:12px;text-align:center}
     .audio audio{width:100%;max-width:420px}
     .history .item{background:#fff;border-radius:12px;margin:10px 0;padding:12px;border-right:5px solid;box-shadow:0 4px 14px rgba(0,0,0,.08)}
@@ -394,6 +394,22 @@
   display: block;
   width: 24px;
   height: 24px;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: nowrap;  /* ⬅️ EMPÊCHE LE RETOUR À LA LIGNE */
+  justify-content: center;
+  align-items: center;
+  overflow-x: auto;  /* ⬅️ SCROLL HORIZONTAL SI NÉCESSAIRE */
+  margin-top: 12px;
+  text-align: center;
+}
+
+.controls button {
+  flex-shrink: 0;  /* ⬅️ EMPÊCHE LE BOUTON DE SE RÉDUIRE */
+  white-space: nowrap;  /* ⬅️ TEXTE NE SE COUPE PAS */
 }
 
   </style>
@@ -811,10 +827,10 @@
 
     // ⬅️ MASQUER LES BOUTONS QUAND ON AFFICHE LE TEXTE/SON (avec délai pour éviter les conflicts)
   E.showVerse.addEventListener('click', () => {
-    setTimeout(() => { E.showBookBtn1.style.display = 'none'; }, 50);
+    setTimeout(() => { E.showBookBtn1.style.display = 'none !important'; }, 50);
   });
   E.showInfo.addEventListener('click', () => {
-    setTimeout(() => { E.showBookBtn2.style.display = 'none'; }, 50);
+    setTimeout(() => { E.showBookBtn2.style.display = 'none !important'; }, 50);
   });
 }
 
@@ -843,10 +859,10 @@ async function showBookTemporary() {
   
     // ⬅️ MASQUER LE BOUTON APRÈS AFFICHAGE
   if(state.mode === "text") {
-    E.showBookBtn1.style.display = 'none';
+    E.showBookBtn1.style.display = 'none !important';
     E.showBookBtn1.disabled = true;
   } else {
-    E.showBookBtn2.style.display = 'none';
+    E.showBookBtn2.style.display = 'none !important';
     E.showBookBtn2.disabled = true;
   }
 }
@@ -1046,8 +1062,8 @@ async function showBookTemporary() {
       }
       
       // --- Réafficher les boutons livre au début de chaque question ---
-      if(E.showBookBtn1) E.showBookBtn1.style.display = (state.mode==="text") ? "inline-block" : "none";
-      if(E.showBookBtn2) E.showBookBtn2.style.display = (state.mode==="audio") ? "inline-block" : "none";
+      if(E.showBookBtn1) E.showBookBtn1.style.display = (state.mode==="text") ? "inline-block !important" : "none !important";
+      if(E.showBookBtn2) E.showBookBtn2.style.display = (state.mode==="audio") ? "inline-block !important" : "none !important";
       if(E.showBookBtn1) E.showBookBtn1.disabled = false;
       if(E.showBookBtn2) E.showBookBtn2.disabled = false;
     }
@@ -1110,7 +1126,7 @@ async function showBookTemporary() {
   
   E.answersText.style.display = 'flex';
   E.showVerse.style.display = 'none';
-  E.showBookBtn1.style.display = 'none';
+  E.showBookBtn1.style.display = 'none !important';
 }
 
     function audioUrlEveryAyah(reciterId,surah,verse){
@@ -1190,7 +1206,7 @@ async function showAudioInfo(){
   E.info.style.display         = 'block';
   E.answersAudio.style.display = 'flex';
   E.showInfo.style.display     = 'none';
-  E.showBookBtn2.style.display = 'none';
+  E.showBookBtn2.style.display = 'none !important';
 }
 
         // Afficher le livre du Coran avec le numéro de page
