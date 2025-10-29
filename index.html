@@ -170,7 +170,9 @@
   }
 }
 
-        .controls{text-align:center;margin-top:12px;display:flex;gap:10px;flex-wrap:nowrap;justify-content:center;align-items:center;overflow-x:auto}
+            .controls{text-align:center;margin-top:12px;display:flex;gap:8px;flex-wrap:nowrap;justify-content:center;align-items:center;overflow-x:auto;min-width:0}
+    .controls button{min-width:auto;padding:10px 12px;font-size:13px;white-space:nowrap;flex-shrink:0}
+    @media (max-width:768px){.controls{gap:4px;overflow-x:auto}.controls button{padding:8px 10px;font-size:12px}}
     .audio{margin-bottom:12px;text-align:center}
     .audio audio{width:100%;max-width:420px}
     .history .item{background:#fff;border-radius:12px;margin:10px 0;padding:12px;border-right:5px solid;box-shadow:0 4px 14px rgba(0,0,0,.08)}
