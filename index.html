@@ -890,6 +890,14 @@ async function showBookTemporary() {
   }
 }
 
+   // --- Réinitialiser le scroll de la barre haute ---
+   function resetBadgesScroll() {
+   const badges = document.querySelector('.badges');
+   if (badges) {
+    badges.scrollLeft = 0;
+  }
+}
+
     function toggleReciter(){
       const isAudio = E.mode.value==="audio";
       E.reciterSection.style.display = isAudio ? 'block' : 'none';
@@ -1070,6 +1078,7 @@ async function showBookTemporary() {
       
       // Cacher le livre au début de chaque nouvelle question
       hideQuranBook();
+      resetBadgesScroll();
       
       if(state.mode==="text"){
         // afficher ref
@@ -1092,6 +1101,7 @@ async function showBookTemporary() {
     }
 
         async function showVerseText(){
+  resetBadgesScroll();
   const q = state.questions[state.idx];
   E.vText.innerHTML = '<span class="loading"></span>';
   E.vText.style.display = 'block';
@@ -1188,10 +1198,11 @@ async function showBookTemporary() {
 
     // Ligne 553 (remplacez l’ancienne fonction showAudioInfo):
 async function showAudioInfo(){
+  resetBadgesScroll();
   const q = state.questions[state.idx];
   // placeholders
   E.tAudio.textContent = "جاري التحميل...";
-  E.sAudio.textContent = q.name;
+   E.sAudio.textContent = q.name;
   E.nAudio.textContent = q.verse;
   E.pAudio.textContent = "...";
   E.jAudio.textContent = "...";
@@ -1307,6 +1318,7 @@ async function showAudioInfo(){
       }
     }
        saveQuizState();      // Sauvegarder après chaque réponse
+       resetBadgesScroll();
 
     function next(){ 
      state.idx++; 
