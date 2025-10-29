@@ -36,7 +36,8 @@
     .stats{text-align:center;margin:12px 0;padding:14px;background:rgba(30,64,175,.08);border:2px solid rgba(30,64,175,.18);border-radius:14px;color:var(--blue);font-weight:700}
     .highlight{color:var(--red);font-weight:800}
     .blue{color:var(--blue);font-weight:800}
-    .btn{padding:14px 22px;border:none;border-radius:12px;font-weight:700;cursor:pointer;transition:.2s;min-width:120px}
+        .btn{padding:14px 22px;border:none;border-radius:12px;font-weight:700;cursor:pointer;transition:.2s;min-width:120px}
+    #fullscreenBtn{min-width:auto;padding:10px 14px;display:flex;align-items:center;justify-content:center}
     .btn:disabled{opacity:.6;cursor:not-allowed}
     .btn-primary{background:linear-gradient(135deg,#1e40af,#3b82f6);color:#fff}
     .btn-neutral{background:#64748b;color:#fff}
@@ -544,8 +545,15 @@
               <div><span id="cur">1</span> / <span id="tot">0</span></div>
             </div>
 
-          </div>
+                    </div>
           <button id="homeBtn" class="btn btn-neutral">العودة للرئيسية</button>
+          <button id="fullscreenBtn" class="btn btn-neutral" title="ملء الشاشة">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+            </svg>
+          </button>
+        </div>
+
         </div>
 
         <div class="qwrap">
@@ -713,8 +721,7 @@
       startVerse:byId('startVerse'),endVerse:byId('endVerse'),
       startVerseErr:byId('startVerseErr'),endVerseErr:byId('endVerseErr'),
       attempts:byId('attempts'),mode:byId('mode'),reciter:byId('reciter'),reciterSection:byId('reciterSection'),
-      totalVerses:byId('totalVerses'),startBtn:byId('startBtn'),
-      homeBtn:byId('homeBtn'),ok:byId('ok'),ko:byId('ko'),time:byId('time'),cur:byId('cur'),tot:byId('tot'),
+      totalVerses:byId('totalVerses'),startBtn:byId('startBtn'),       homeBtn:byId('homeBtn'),fullscreenBtn:byId('fullscreenBtn'),ok:byId('ok'),ko:byId('ko'),time:byId('time'),cur:byId('cur'),tot:byId('tot'),
       vNum:byId('vNum'),sName:byId('sName'),vText:byId('vText'),showVerse:byId('showVerse'),
       showBookBtn1:byId('showBookBtn1'),
       answersText:byId('answersText'),okBtn1:byId('okBtn1'),koBtn1:byId('koBtn1'),next1:byId('next1'),
@@ -809,6 +816,7 @@
   E.startBtn.addEventListener('click', startQuiz);
   E.homeBtn.addEventListener('click', () => goto('home'));
   E.newQuiz.addEventListener('click', () => goto('home'));
+  E.fullscreenBtn.addEventListener('click', toggleFullscreen);
 
   // texte
   E.showVerse.addEventListener('click', showVerseText);
@@ -866,6 +874,21 @@ async function showBookTemporary() {
   } else {
     E.showBookBtn2.style.display = 'none !important';
     E.showBookBtn2.disabled = true;
+  }
+}
+
+    // --- Fonction Plein Écran ---
+    function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+    // Activer le plein écran
+    document.documentElement.requestFullscreen().catch(err => {
+      console.error('Erreur plein écran:', err);
+    });
+    } else {
+    // Désactiver le plein écran
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
   }
 }
 
