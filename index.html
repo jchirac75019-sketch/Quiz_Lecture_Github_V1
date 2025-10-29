@@ -1175,7 +1175,7 @@ async function showBookTemporary() {
       return `https://everyayah.com/data/${r.path}/${s}${v}.mp3`;
     }
     
-    async function loadAudio(q){
+        async function loadAudio(q){
   const primary = audioUrlEveryAyah(state.reciter, q.surah, q.verse);
   
   try {
@@ -1184,20 +1184,32 @@ async function showBookTemporary() {
     await E.player.play();
     console.log('✅ Audio chargé:', primary);
   } catch(err) {
-    console.error('❌ Erreur audio pour', state.reciter, ':', err);
+    console.error('❌ Erreur API 1 pour', state.reciter, ':', err);
     console.log('URL tentée:', primary);
     
-    // Fallback vers Alafasy en dernier recours
-    const fallbackUrl = audioUrlEveryAyah('ghamdi', q.surah, q.verse);
+    // Fallback 1 : API Alquran.cloud
+    const fallback1Url = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${String(q.surah).padStart(3,'0')}${String(q.verse).padStart(3,'0')}.mp3`;
     try {
-      E.player.src = fallbackUrl;
+      E.player.src = fallback1Url;
       await E.player.load();
       await E.player.play();
-      console.log('⚠️ Fallback Alafasy utilisé');
-      alert('تعذر تحميل صوت القارئ المحدد. استخدام سعد الغامدي بدلاً منه');
+      console.log('⚠️ Fallback 1 (Alquran.cloud) utilisé');
+      alert('تعذر تحميل صوت القارئ المحدد. استخدام API بديل');
     } catch(err2) {
-      console.error('❌ Fallback échoué aussi:', err2);
-      alert('خطأ في تحميل الصوت');
+      console.error('❌ Fallback 1 échoué:', err2);
+      
+      // Fallback 2 : Ghamdi en dernier recours
+      const fallback2Url = audioUrlEveryAyah('ghamdi', q.surah, q.verse);
+      try {
+        E.player.src = fallback2Url;
+        await E.player.load();
+        await E.player.play();
+        console.log('⚠️ Fallback 2 (Ghamdi) utilisé');
+        alert('تعذر تحميل الصوت. استخدام سعد الغامدي بدلاً منه');
+      } catch(err3) {
+        console.error('❌ Fallback 2 échoué aussi:', err3);
+        alert('خطأ في تحميل الصوت من جميع المصادر');
+      }
     }
   }
 }
