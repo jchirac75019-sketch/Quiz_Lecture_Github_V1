@@ -844,6 +844,7 @@
 
       // --- Nouveau : Affichage livre temporaire ---
 async function showBookTemporary() {
+  resetBadgesScroll();
   const q = state.questions[state.idx];
   
   try {
