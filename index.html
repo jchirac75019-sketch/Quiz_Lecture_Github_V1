@@ -37,6 +37,10 @@
     .highlight{color:var(--red);font-weight:800}
     .blue{color:var(--blue);font-weight:800}
     .btn{padding:14px 22px;border:none;border-radius:12px;font-weight:700;cursor:pointer;transition:.2s;min-width:120px;flex-shrink:0}
+    #quranBookAudio{width:80px !important;height:35px !important;padding:4px !important;flex-shrink:0;display:none}
+    #quranBookAudio .book-page{padding:4px !important}
+    #quranBookAudio .page-number{font-size:11px !important}
+
     #homeBtn{flex-shrink:0;min-width:140px}
     #fullscreenBtn{min-width:44px;padding:10px 8px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
     .btn:disabled{opacity:.6;cursor:not-allowed}
@@ -597,13 +601,20 @@
         </div>
 
             <div class="qtext">حدد معلومات الآية المتلوة:</div>
-            <div id="info" class="verset" style="display:none;text-align:right">
+                        <div id="info" class="verset" style="display:none;text-align:right">
               <div>النص: <span id="tAudio"></span></div>
               <div>السورة: <span id="sAudio" class="blue"></span></div>
-              <div>رقم الآية: <span id="nAudio" class="blue"></span></div>
+               <div style="display:flex;align-items:center;justify-content:flex-start;gap:12px;flex-wrap:nowrap">
+                <span style="display:flex;align-items:center;gap:8px;white-space:nowrap">
+                  رقم الآية: <span id="nAudio" class="blue"></span>
+                  <div id="quranBookAudio" class="quran-book" style="margin:0;width:80px;height:35px;flex-shrink:0;display:none"></div>
+                </span>
+              </div>
+
               <div>رقم الصفحة: <span id="pAudio" class="blue"></span></div>
               <div>رقم الجزء: <span id="jAudio" class="blue"></span></div>
             </div>
+
             <div class="controls">
   <button id="showBookBtn2" class="btn btn-book" title="عرض رقم الصفحة">
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -736,7 +747,8 @@
       fOk:byId('fOk'),fKo:byId('fKo'),fTime:byId('fTime'),tStart:byId('tStart'),tEnd:byId('tEnd'),pct:byId('pct'),hist:byId('hist'),
       newQuiz:byId('newQuiz'),nosleep:byId('nosleep'),qCounter:byId('qCounter'),textMode:byId('textMode'),audioMode:byId('audioMode'),
       quranBook:byId('quranBook'),leftPage:byId('leftPage'),rightPage:byId('rightPage'),
-      leftPageNum:byId('leftPageNum'),rightPageNum:byId('rightPageNum')
+            leftPageNum:byId('leftPageNum'),rightPageNum:byId('rightPageNum'),
+      quranBookAudio:byId('quranBookAudio'),leftPageAudio:null,rightPageAudio:null
     };
 
     function byId(id){return document.getElementById(id)}
@@ -1247,6 +1259,9 @@ async function showAudioInfo(){
     
     // *** AFFICHER LE LIVRE AVEC LE NUMÉRO DE PAGE ***
     displayQuranBook(v.page_number);
+
+    // *** AFFICHER LE LIVRE AUSSI EN MODE AUDIO À CÔTÉ DU NUMÉRO ***
+    displayQuranBookAudio(v.page_number);
     
   } catch(e) {
     console.error('Erreur showAudioInfo:', e);
@@ -1301,6 +1316,56 @@ async function showAudioInfo(){
       E.quranBook.classList.add('show');
     }
     
+             // Afficher le livre du Coran en mode audio (à côté du numéro du verset)
+    function displayQuranBookAudio(pageNumber) {
+      if (!pageNumber || pageNumber < 1 || pageNumber > 604) {
+        E.quranBookAudio.style.display = 'none';
+        return;
+      }
+      
+      const isOdd = pageNumber % 2 !== 0;
+      
+      // Vider le contenu précédent
+      E.quranBookAudio.innerHTML = '';
+      
+      const bookPages = document.createElement('div');
+      bookPages.className = 'book-pages';
+      
+      if (isOdd) {
+        // Page IMPAIRE (droite)
+        const rightPage = document.createElement('div');
+        rightPage.className = 'book-page right active';
+        const rightPageNum = document.createElement('div');
+        rightPageNum.className = 'page-number';
+        rightPageNum.textContent = pageNumber;
+        rightPage.appendChild(rightPageNum);
+        bookPages.appendChild(rightPage);
+        
+        // Page gauche vide
+        const leftPage = document.createElement('div');
+        leftPage.className = 'book-page left empty';
+        bookPages.appendChild(leftPage);
+        
+      } else {
+        // Page PAIRE (gauche)
+        const leftPage = document.createElement('div');
+        leftPage.className = 'book-page left active';
+        const leftPageNum = document.createElement('div');
+        leftPageNum.className = 'page-number';
+        leftPageNum.textContent = pageNumber;
+        leftPage.appendChild(leftPageNum);
+        bookPages.appendChild(leftPage);
+        
+        // Page droite vide
+        const rightPage = document.createElement('div');
+        rightPage.className = 'book-page right empty';
+        bookPages.appendChild(rightPage);
+      }
+      
+      E.quranBookAudio.appendChild(bookPages);
+      E.quranBookAudio.style.display = 'block';
+    }
+
     // Cacher le livre du Coran
     function hideQuranBook() {
       E.quranBook.classList.remove('show');
