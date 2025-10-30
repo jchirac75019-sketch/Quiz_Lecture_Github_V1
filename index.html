@@ -1175,14 +1175,20 @@ async function showBookTemporary() {
       }
     }
 
-   // Restaurer l'état du quiz
-    function restoreQuizIfNeeded() {
-      const saved = sessionStorage.getItem('quizState');
-      if (!saved) return;
-  
-      try {
-        const restored = JSON.parse(saved);
+// Restaurer l'état du quiz
+function restoreQuizIfNeeded() {
+  const saved = sessionStorage.getItem('quizState');
+  if (!saved) return;
+
+  try {
+    const restored = JSON.parse(saved);
     
+    // Vérifier que l'état est valide
+    if (!restored.questions || restored.questions.length === 0) {
+      sessionStorage.removeItem('quizState');
+      return;
+    }
+
     // Restaurer l'état
     state = {
       ...restored,
@@ -1192,34 +1198,34 @@ async function showBookTemporary() {
         ...h,
         at: new Date(h.at)
       })),
-      timer: null  // Le timer sera redémarré
+      timer: null
     };
     
     // Restaurer l'UI
-        E.tot.textContent = state.questions.length;
-        E.cur.textContent = (state.idx + 1).toString();
-        E.ok.textContent = state.ok.toString();
-        E.ko.textContent = state.ko.toString();
-        E.time.textContent = fmtMs(state.activeMs);
-    
-    // Afficher la page quiz
-        goto('quiz');
-        startTimer();
-        showQuestion();
-        requestWakeLock();
-    
-        console.log('Quiz restauré avec succès');
-      } catch (e) {
-        console.error('Erreur de restauration:', e);
-        sessionStorage.removeItem('quizState');
-      }
-    }
+    E.tot.textContent = state.questions.length;
+    E.cur.textContent = (state.idx + 1).toString();
+    E.ok.textContent = state.ok.toString();
+    E.ko.textContent = state.ko.toString();
+    E.time.textContent = fmtMs(state.activeMs);
 
-   // Effacer la sauvegarde
-    function clearQuizState() {
-      sessionStorage.removeItem('quizState');
-      releaseWakeLock();
-    }
+    // Afficher la page quiz
+    goto('quiz');
+    startTimer();
+    showQuestion();
+    requestWakeLock();
+
+    console.log('Quiz restauré avec succès à la question', state.idx + 1);
+  } catch (e) {
+    console.error('Erreur de restauration:', e);
+    sessionStorage.removeItem('quizState');
+  }
+}
+
+// Effacer la sauvegarde
+function clearQuizState() {
+  sessionStorage.removeItem('quizState');
+  releaseWakeLock();
+}
 
     function fmtMs(ms){
       const s=Math.floor(ms/1000);
