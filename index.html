@@ -16,14 +16,14 @@
     :root{--blue:#1e40af;--green:#059669;--red:#dc2626;--bg1:#ffffff;--bg2:#f8fafc;--text:#1f2937}
     html,body{height:100%}
     body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Noto Sans","Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:var(--text);direction:rtl}
-    .app-container{max-width:1200px;margin:0 auto;padding:16px 16px 40px}
+    .app-container{max-width:1200px;margin:0 auto;padding:4px 16px 40px}
     .page{display:none;animation:fade .25s ease}
     .page.active{display:block}
     @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
     .header{background:rgba(255,255,255,.95);border-radius:18px;padding:24px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.1);margin:16px 0}
     .header h1{color:var(--blue);font-size:clamp(22px,5vw,34px);margin-bottom:8px}
     .subtitle{color:#64748b}
-    .card{background:rgba(255,255,255,.95);border-radius:18px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.1);margin:16px 0}
+    .card{background:rgba(255,255,255,.95);border-radius:18px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.1);margin:4px 0}
     .section{background:rgba(248,250,252,.88);border:2px solid rgba(30,64,175,.12);border-radius:14px;padding:16px;margin-bottom:16px}
     .section h3{color:var(--blue);text-align:center;margin-bottom:12px}
     .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -74,9 +74,9 @@
 }
 
     .badge .ok{color:var(--green)} .badge .ko{color:var(--red)}
-    .qwrap{min-height:360px}
+    .qwrap{min-height:360px;margin-top:-16px}
     .qcounter{text-align:center;color:#64748b;font-weight:700;margin-bottom:14px}
-    .qtext{text-align:center;font-weight:700;line-height:1.7;background:#fff;border-radius:14px;padding:18px;border-right:5px solid var(--blue)}
+    .qtext{text-align:center;font-weight:700;line-height:1.7;background:#fff;border-radius:14px;padding:10px 16px;border-right:5px solid var(--blue)}
 
 .verset, .info {
   font-family: 'Amiri', serif;       /* Police coranique élégante */
@@ -141,6 +141,7 @@
   gap: 12px;
   justify-content: center;
   flex-wrap: wrap;        /* Permet le retour à la ligne sur mobile */
+  margin-top: -20px;
 }
 
 .flex-audio audio {
@@ -180,7 +181,7 @@
     .controls{text-align:center;margin-top:12px;display:flex;gap:8px;flex-wrap:nowrap;justify-content:center;align-items:center;overflow-x:auto;min-width:0}
     .controls button{min-width:auto;padding:10px 12px;font-size:13px;white-space:nowrap;flex-shrink:0}
     @media (max-width:768px){.controls{gap:4px;overflow-x:auto}.controls button{padding:8px 10px;font-size:12px}}
-    .audio{margin-bottom:12px;text-align:center}
+    .audio{margin-top:-8px;margin-bottom:8px;text-align:center}
     .audio audio{width:100%;max-width:420px}
     .history .item{background:#fff;border-radius:12px;margin:10px 0;padding:12px;border-right:5px solid;box-shadow:0 4px 14px rgba(0,0,0,.08)}
     .history .item.ok{background:#f0fdf4;border-color:var(--green)}
