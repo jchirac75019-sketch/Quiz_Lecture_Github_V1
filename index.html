@@ -177,7 +177,7 @@
   }
 }
 
-            .controls{text-align:center;margin-top:12px;display:flex;gap:8px;flex-wrap:nowrap;justify-content:center;align-items:center;overflow-x:auto;min-width:0}
+    .controls{text-align:center;margin-top:12px;display:flex;gap:8px;flex-wrap:nowrap;justify-content:center;align-items:center;overflow-x:auto;min-width:0}
     .controls button{min-width:auto;padding:10px 12px;font-size:13px;white-space:nowrap;flex-shrink:0}
     @media (max-width:768px){.controls{gap:4px;overflow-x:auto}.controls button{padding:8px 10px;font-size:12px}}
     .audio{margin-bottom:12px;text-align:center}
@@ -187,6 +187,51 @@
     .history .item.ko{background:#fef2f2;border-color:var(--red)}
     .nosleep{position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0}
     .loading{display:inline-block;width:22px;height:22px;border:3px solid #e5e7eb;border-top:3px solid var(--blue);border-radius:50%;animation:spin 1s linear infinite}
+
+    .content-card {
+      background: rgba(255,255,255,.97);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.12);
+      border: 1px solid rgba(30,64,175,.08);
+      margin: 20px 0;
+    }
+    
+    .content-card > div,
+    .content-card > form {
+      margin-bottom: 16px;
+    }
+    
+    .content-card > div:last-child,
+    .content-card > form:last-child {
+      margin-bottom: 0;
+    }
+    
+    @media (max-width: 768px) {
+      .content-card {
+        padding: 20px;
+        margin: 16px 0;
+      }
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      .content-card {
+        background: rgba(17,24,39,.95);
+        border-color: rgba(30,64,175,.15);
+        box-shadow: 0 10px 40px rgba(0,0,0,.3);
+      }
+    }
+
+    @keyframes blink-red {
+      0% { color: #1f2937; font-size: 1rem; }
+      50% { color: var(--red); font-size: 1.1rem; }
+      100% { color: #1f2937; font-size: 1rem; }
+    }
+    
+    .qtext.blink {
+      animation: blink-red 0.6s ease-in-out 3;
+    }
+
     @keyframes spin{to{transform:rotate(360deg)}}
     @media (max-width:768px){.grid2{grid-template-columns:1fr} .quiz-header{flex-direction:column;align-items:stretch}}
     @media (prefers-color-scheme:dark){
@@ -603,11 +648,11 @@
             <div class="group">
               <label>عدد المحاولات:</label>
               <select id="attempts">
+                <option value="infinite">لا نهائي</option>
                 <option value="5">5 محاولات</option>
                 <option value="10">10 محاولات</option>
                 <option value="15">15 محاولة</option>
                 <option value="20">20 محاولة</option>
-                <option value="infinite">لا نهائي</option>
               </select>
             </div>
             <div class="group">
@@ -694,7 +739,7 @@
         </div>
        </div>
 
-        <div class="qwrap">
+        <div class="qwrap content-card">
           <div id="qCounter" class="qcounter"></div>
 
           <!-- Mode texte -->
@@ -717,7 +762,6 @@
                 <button id="okBtn1" class="btn btn-green">إجابة صحيحة</button>
                 <button id="koBtn1" class="btn btn-red">إجابة خاطئة</button>
               </div>
-              <button id="next1" class="btn btn-purple" style="display:none">السؤال التالي</button>
             </div>
           </div>
 
@@ -728,7 +772,7 @@
             <button id="replay" class="btn btn-amber">إعادة التشغيل / تشغيل الصوت</button>
         </div>
 
-            <div class="qtext">حدد معلومات الآية المتلوة:</div>
+            <div id="audioTitle" class="qtext">حدد معلومات الآية المتلوة:</div>
             <div id="info" class="verset" style="display:none;text-align:right">
               <div>النص: <span id="tAudio"></span></div>
               <div>السورة: <span id="sAudio" class="blue"></span></div>
@@ -754,7 +798,6 @@
                 <button id="okBtn2" class="btn btn-green">إجابة صحيحة</button>
                 <button id="koBtn2" class="btn btn-red">إجابة خاطئة</button>
               </div>
-              <button id="next2" class="btn btn-purple" style="display:none">التالي</button>
             </div>
           </div>
         </div>
@@ -862,13 +905,14 @@
       startVerse:byId('startVerse'),endVerse:byId('endVerse'),
       startVerseErr:byId('startVerseErr'),endVerseErr:byId('endVerseErr'),
       attempts:byId('attempts'),mode:byId('mode'),reciter:byId('reciter'),reciterSection:byId('reciterSection'),
-      totalVerses:byId('totalVerses'),startBtn:byId('startBtn'),       homeBtn:byId('homeBtn'),fullscreenBtn:byId('fullscreenBtn'),ok:byId('ok'),ko:byId('ko'),time:byId('time'),cur:byId('cur'),tot:byId('tot'),
+      totalVerses:byId('totalVerses'),startBtn:byId('startBtn'),audioTitle:byId('audioTitle'),
+homeBtn:byId('homeBtn'),fullscreenBtn:byId('fullscreenBtn'),ok:byId('ok'),ko:byId('ko'),time:byId('time'),cur:byId('cur'),tot:byId('tot'),
       vNum:byId('vNum'),sName:byId('sName'),vText:byId('vText'),showVerse:byId('showVerse'),
       showBookBtn1:byId('showBookBtn1'),
-      answersText:byId('answersText'),okBtn1:byId('okBtn1'),koBtn1:byId('koBtn1'),next1:byId('next1'),
+      answersText:byId('answersText'),okBtn1:byId('okBtn1'),koBtn1:byId('koBtn1'),
       player:byId('player'),replay:byId('replay'),showInfo:byId('showInfo'),showBookBtn2:byId('showBookBtn2'),
       info:byId('info'),tAudio:byId('tAudio'),sAudio:byId('sAudio'),nAudio:byId('nAudio'),pAudio:byId('pAudio'),jAudio:byId('jAudio'),
-      answersAudio:byId('answersAudio'),okBtn2:byId('okBtn2'),koBtn2:byId('koBtn2'),next2:byId('next2'),
+      answersAudio:byId('answersAudio'),okBtn2:byId('okBtn2'),koBtn2:byId('koBtn2'),
       fOk:byId('fOk'),fKo:byId('fKo'),fTime:byId('fTime'),tStart:byId('tStart'),tEnd:byId('tEnd'),pct:byId('pct'),hist:byId('hist'),
       newQuiz:byId('newQuiz'),nosleep:byId('nosleep'),qCounter:byId('qCounter'),textMode:byId('textMode'),audioMode:byId('audioMode'),
             quranBook:byId('quranBook'),leftPage:byId('leftPage'),rightPage:byId('rightPage'),
@@ -964,14 +1008,12 @@
   E.showVerse.addEventListener('click', showVerseText);
   E.okBtn1.addEventListener('click', ()=>record(true));
   E.koBtn1.addEventListener('click', ()=>record(false));
-  E.next1.addEventListener('click', next);
 
   // audio
   E.replay.addEventListener('click', ()=>{E.player.currentTime=0;E.player.play().catch(()=>{})});
   E.showInfo.addEventListener('click', showAudioInfo);
   E.okBtn2.addEventListener('click', ()=>record(true));
   E.koBtn2.addEventListener('click', ()=>record(false));
-  E.next2.addEventListener('click', next);
   
   // visibility → pause
   document.addEventListener('visibilitychange', ()=>{if(document.hidden) pauseTimer(); else resumeTimer();});
@@ -981,14 +1023,6 @@
   // --- Boutons livre temporaires (nouveaux) ---
   E.showBookBtn1.addEventListener('click', showBookTemporary);
   E.showBookBtn2.addEventListener('click', showBookTemporary);
-
-    // ⬅️ MASQUER LES BOUTONS QUAND ON AFFICHE LE TEXTE/SON (avec délai pour éviter les conflicts)
-  E.showVerse.addEventListener('click', () => {
-    setTimeout(() => { E.showBookBtn1.style.display = 'none !important'; }, 50);
-  });
-  E.showInfo.addEventListener('click', () => {
-    setTimeout(() => { E.showBookBtn2.style.display = 'none !important'; }, 50);
-  });
 }
 
       // --- Nouveau : Affichage livre temporaire ---
@@ -1014,15 +1048,6 @@ async function showBookTemporary() {
       displayQuranBook(approxPageNum);
     }
   }
-  
-    // ⬅️ MASQUER LE BOUTON APRÈS AFFICHAGE
-  if(state.mode === "text") {
-    E.showBookBtn1.style.display = 'none !important';
-    E.showBookBtn1.disabled = true;
-  } else {
-    E.showBookBtn2.style.display = 'none !important';
-    E.showBookBtn2.disabled = true;
-  }
 }
 
     // --- Fonction Plein Écran ---
@@ -1040,13 +1065,13 @@ async function showBookTemporary() {
   }
 }
 
-   // --- Réinitialiser le scroll de la barre haute ---
+      // --- Réinitialiser le scroll de la barre haute ---
    function resetBadgesScroll() {
-   const badges = document.querySelector('.badges');
-   if (badges) {
-    badges.scrollLeft = 0;
-  }
-}
+     const badges = document.querySelector('.badges');
+     if (badges) {
+       badges.scrollLeft = 0;
+     }
+   }
 
     function toggleReciter(){
       const isAudio = E.mode.value==="audio";
@@ -1235,12 +1260,18 @@ async function showBookTemporary() {
         E.textMode.style.display='block'; E.audioMode.style.display='none';
         E.vNum.textContent=q.verse; E.sName.textContent=q.name;
         E.vText.style.display='none'; E.vText.innerHTML='';
-        E.answersText.style.display='none'; E.next1.style.display='none'; E.showVerse.style.display='inline-block';
+        E.answersText.style.display='none'; E.showVerse.style.display='inline-block';
       }else{
         // audio
         E.textMode.style.display='none'; E.audioMode.style.display='block';
-        E.info.style.display='none'; E.answersAudio.style.display='none'; E.next2.style.display='none'; E.showInfo.style.display='inline-block';
+        E.info.style.display='none'; E.answersAudio.style.display='none'; E.showInfo.style.display='inline-block';
         loadAudio(q);
+
+        // Déclencher l'animation du titre
+        E.audioTitle.classList.remove('blink');
+        setTimeout(() => {
+          E.audioTitle.classList.add('blink');
+        }, 10);
       }
       
       // --- Réafficher les boutons livre au début de chaque question ---
@@ -1309,7 +1340,6 @@ async function showBookTemporary() {
   
   E.answersText.style.display = 'flex';
   E.showVerse.style.display = 'none';
-  E.showBookBtn1.style.display = 'none !important';
 }
 
     function audioUrlEveryAyah(reciterId,surah,verse){
@@ -1405,7 +1435,6 @@ async function showAudioInfo(){
   E.info.style.display         = 'block';
   E.answersAudio.style.display = 'flex';
   E.showInfo.style.display     = 'none';
-  E.showBookBtn2.style.display = 'none !important';
 }
 
         // Afficher le livre indépendant dans le compartiment de réponse
@@ -1532,20 +1561,21 @@ async function showAudioInfo(){
       let sum=0; for(const s of SOURATES){ if(s.num<surah) sum+=s.versets; } return sum;
     }
 
-    function record(isOk){
+        function record(isOk){
       const q=state.questions[state.idx];
       if(isOk){ state.ok++; E.ok.textContent=state.ok; } else { state.ko++; E.ko.textContent=state.ko; }
       state.history.push({
         q, isOk, at:new Date()
       });
-      if(state.mode==="text"){
-        E.answersText.style.display='none'; E.next1.style.display='inline-block';
-      }else{
-        E.answersAudio.style.display='none'; E.next2.style.display='inline-block';
-      }
+      
+      saveQuizState();      // Sauvegarder après chaque réponse
+      resetBadgesScroll();
+      
+      // Passer à la question suivante automatiquement après 600ms
+      setTimeout(() => {
+        next();
+      }, 600);
     }
-       saveQuizState();      // Sauvegarder après chaque réponse
-       resetBadgesScroll();
 
     function next(){ 
      state.idx++; 
