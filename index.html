@@ -49,6 +49,7 @@
     .btn:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.18)}
     .quiz-header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:nowrap;min-width:0}
     .badges{display:flex;flex-wrap:nowrap;gap:8px;align-items:center;overflow-x:auto}
+    
     .badge{
   background:#fff;
   border-radius:12px;
@@ -64,6 +65,12 @@
   text-align:center;
   line-height:1.2;            /* ⬅️ RÉDUIT LA HAUTEUR DES LIGNES */
   border:1px solid #d1d5db;  /* ⬅️ CONTOUR GRIS LÉGER - AJUSTABLE */
+  flex-shrink:0;
+  white-space:nowrap;
+}
+
+.badge div:last-child {
+  white-space:nowrap;
 }
 
     .badge .ok{color:var(--green)} .badge .ko{color:var(--red)}
