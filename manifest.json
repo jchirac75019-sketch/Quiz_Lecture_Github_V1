@@ -1,7 +1,7 @@
 {
   "id": "quran-quiz-app",
   "name": "Quran Interactive Quiz Application",
-  "short_name": "Quiz Coran",
+  "short_name": "صوت الحق1 (إدريس)",
   "description": "Interactive Quranic verse quiz with audio, scoring, and Arabic support. Available on Windows, Android, and iOS.",
   "start_url": "/quiz-audio-premier/",
   "scope": "/quiz-audio-premier/",
