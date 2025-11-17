@@ -1,38 +1,72 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+  <!-- ========== ENCODAGE - CHARACTER ENCODING ========== -->
   <meta charset="UTF-8" />
+  
+  <!-- ========== VIEWPORT - MOBILE CONFIGURATION ========== -->
   <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover" />
   
-  <!-- Manifest pour Android et Web -->
+  <!-- ========== SERVICE WORKER REGISTRATION - PWA OFFLINE ==========
+       Enregistre le Service Worker pour fonctionnement hors ligne
+  ========== -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(() => {
+        console.log('✅ Service Worker enregistré avec succès');
+      }).catch(err => {
+        console.error('⚠️ Erreur enregistrement Service Worker:', err);
+      });
+    }
+  </script>
+  
+  <!-- ========== MANIFEST POUR PWA - APP INSTALLATION ==========
+       Permet installation comme app native sur téléphone + ordinateur
+  ========== -->
   <link rel="manifest" href="/quiz-audio-premier/manifest.json">
   
-  <!-- Configuration pour Windows -->
+  <!-- ========== CONFIGURATION WINDOWS - WINDOWS TILE ==========
+       Pour l'épingle au menu Démarrer sur Windows
+  ========== -->
   <meta name="msapplication-config" content="/quiz-audio-premier/browserconfig.xml">
   <meta name="msapplication-TileColor" content="#1e40af">
-  <meta name="msapplication-TileImage" content="/quiz-audio-premier/images/icon-windows-144.png">
+  <meta name="msapplication-TileImage" content="/quiz-audio-premier/images/icon-192.png">
   
-  <!-- Configuration pour Android -->
+  <!-- ========== CONFIGURATION ANDROID - ANDROID APP ==========
+       Couleur thème pour Android + capacités web app
+  ========== -->
   <meta name="theme-color" content="#1e40af">
   <meta name="mobile-web-app-capable" content="yes">
   
-  <!-- Configuration pour iOS/Apple -->
+  <!-- ========== CONFIGURATION iOS/APPLE - iOS APP ==========
+       Support pour iOS et macOS
+  ========== -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Quiz Coran">
-  <link rel="apple-touch-icon" href="/quiz-audio-premier/images/icon-apple-180.png">
+  <meta name="apple-mobile-web-app-title" content="صوت الحق1">
+  <link rel="apple-touch-icon" href="/quiz-audio-premier/images/icon-192.png">
   
-  <!-- Favicon standard -->
-  <link rel="icon" href="/quiz-audio-premier/images/favicon-32.png" sizes="32x32" type="image/png">
-  <link rel="icon" href="/quiz-audio-premier/images/favicon-192.png" sizes="192x192" type="image/png">
-  <link rel="icon" href="/quiz-audio-premier/images/favicon.svg" type="image/svg+xml">
+  <!-- ========== FAVICON & ICÔNES - ICONS & FAVICON ==========
+       Références aux icônes pour différents appareils
+  ========== -->
+  <link rel="icon" href="/quiz-audio-premier/images/icon-192.png" sizes="192x192" type="image/png">
+  <link rel="icon" href="/quiz-audio-premier/images/icon-512.png" sizes="512x512" type="image/png">
   
+  <!-- ========== TITRE DE PAGE - PAGE TITLE ========== -->
   <title>Quiz Coran - تطبيق اختبار القرآن</title>
   
+  <!-- ========== POLICES EXTERNES - EXTERNAL FONTS ==========
+       Polices arabes depuis Google Fonts
+  ========== -->
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700&display=swap">
+  
+  <!-- ========== FEUILLE DE STYLE EXTERNE - EXTERNAL STYLESHEET ========== -->
   <link rel="stylesheet" href="style.css">
 
+  <!-- ========== STYLES INLINE - INLINE STYLES (ORIGINAL PRESERVED) ==========
+       Tous les styles CSS originaux conservés intégralement
+  ========== -->
   <style>
 
     *{margin:0;padding:0;box-sizing:border-box}
